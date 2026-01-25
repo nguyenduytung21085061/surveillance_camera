@@ -82,6 +82,7 @@ class st7735s {
         void init();
         void pixels(int y, int h);
         void set_dc(gpio_level_t level);
+        void transmit(uint8_t *tx);
 	private:
 		spi spi0;
 		gpio gpio_dc, gpio_rst;

@@ -25,6 +25,28 @@ void st7735s::init(){
 	this->command(_DISPON);
 }
 
+void st7735s::pixels(int y, int h){
+	this->command(_CASET);
+	this->data(_NOP);
+	this->data(_NOP);
+	this->data(_NOP);
+	this->data(_WIDTH - 1);
+	this->command(_RASET);
+	this->data(_NOP);
+	this->data(y);
+	this->data(_NOP);
+	this->data(y + h - 1);
+	this->command(_RAMWR);
+}
+
+void st7735s::set_dc(gpio_level_t level){
+	this->gpio_dc.set_level(level);
+}
+
+void st7735s::transmit(uint8_t *tx){
+	this->spi0.transmit(tx);
+}
+
 void st7735s::command(uint8_t c){
 	this->gpio_dc.set_level(LOW);
 	this->spi0.transmit(&c);
