@@ -7,7 +7,7 @@
 #include <cstring>
 
 typedef enum {
-	GPIO0_A4_D = 4,
+    GPIO0_A4_D = 4,
     GPIO1_A2_D = 34,
     GPIO1_B2_D = 42,
     GPIO1_B3_D = 43,
@@ -34,29 +34,37 @@ typedef enum {
 } gpio_pin_t;
 
 typedef enum {
-	OUTPUT = 0,
-	INPUT,
-	INPUT_PULLUP,
-	INPUT_PULLDOWN
+    OUTPUT = 0,
+    INPUT,
+    INPUT_PULLUP,
+    INPUT_PULLDOWN
 } gpio_mode_t;
 
 typedef enum {
-	LOW = 0,
-	HIGH 
+    LOW = 0,
+    HIGH 
 } gpio_level_t;
 
 class gpio{
- 	public:
-		gpio(gpio_pin_t pins, gpio_mode_t mode);
-		~gpio();
+    public:
+        gpio(gpio_pin_t pins, gpio_mode_t mode);
+        ~gpio();
         void set_mode(gpio_mode_t mode);
         void set_level(gpio_level_t level);
         bool get_level();
+<<<<<<< HEAD
 	private:
 		gpio_pin_t pins;
 		gpio_mode_t mode;
 		void export_gpio(gpio_pin_t pins);
 		void unexport_gpio(gpio_pin_t pins);
+=======
+    private:
+        gpio_pin_t pins;
+        gpio_mode_t mode;
+        void export_gpio(gpio_pin_t pins);
+        void unexport_gpio(gpio_pin_t pins);
+>>>>>>> 3a9f55d (driver spi on linux)
         void direction_gpio(gpio_pin_t pins, gpio_mode_t mode);
 };
 
