@@ -5,3 +5,5 @@ node_camera/tools/
 node_camera/.cache/
 node_camera/compile_commands.json
 node_camera/Makefile
+node_camera/gpio.o
+node_camera/spi.o
