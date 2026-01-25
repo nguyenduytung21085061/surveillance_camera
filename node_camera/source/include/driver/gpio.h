@@ -50,6 +50,8 @@ class gpio{
 		gpio(gpio_pin_t pins, gpio_mode_t mode);
 		~gpio();
         void set_mode(gpio_mode_t mode);
+        void set_level(gpio_level_t level);
+        bool get_level();
 	private:
 		gpio_pin_t pins;
 		gpio_mode_t mode;
