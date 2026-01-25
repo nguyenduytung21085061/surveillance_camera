@@ -52,19 +52,11 @@ class gpio{
         void set_mode(gpio_mode_t mode);
         void set_level(gpio_level_t level);
         bool get_level();
-<<<<<<< HEAD
-	private:
-		gpio_pin_t pins;
-		gpio_mode_t mode;
-		void export_gpio(gpio_pin_t pins);
-		void unexport_gpio(gpio_pin_t pins);
-=======
     private:
         gpio_pin_t pins;
         gpio_mode_t mode;
         void export_gpio(gpio_pin_t pins);
         void unexport_gpio(gpio_pin_t pins);
->>>>>>> 3a9f55d (driver spi on linux)
         void direction_gpio(gpio_pin_t pins, gpio_mode_t mode);
 };
 
