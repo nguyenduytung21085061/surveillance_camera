@@ -1,5 +1,6 @@
 .pio/
 .clangd
+train/
 node_camera/source/output/
 node_camera/tools/
 node_camera/.cache/

@@ -5,6 +5,8 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <linux/videodev2.h>
+#include <rknn_api.h>
+#include <pthread.h>
 #include "display/st7735s.h"
 #include "gpio.h"
 
@@ -15,6 +17,7 @@ struct usb_rapoo_buffer {
 
 uint8_t yuv422[160 * 10 * 2];
 uint8_t rgb565[160 * 10 * 2];
+uint8_t rgb888[160 * 128 * 3];
 
 static inline uint16_t yuv_to_rgb(int y, int u, int v) {
     int c = y - 16;
@@ -28,6 +31,27 @@ static inline uint16_t yuv_to_rgb(int y, int u, int v) {
     if (b < 0) b = 0; else if (b > 255) b = 255;
     return (uint16_t)(( (r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3));
 }
+
+static inline void yuyv_to_rgb888(uint8_t *yuyv, uint8_t *rgb, int width, int height) {
+    int p = 0;
+    for (int i = 0; i < width * height * 2; i += 4) {
+        int y0 = yuyv[i];
+        int u  = yuyv[i + 1];
+        int y1 = yuyv[i + 2];
+        int v  = yuyv[i + 3];
+        int c = y0 - 16;
+        int d = u - 128;
+        int e = v - 128;
+        rgb[p++] = (298 * c + 409 * e + 128) >> 8;
+        rgb[p++] = (298 * c - 100 * d - 208 * e + 128) >> 8;
+        rgb[p++] = (298 * c + 516 * d + 128) >> 8;
+        c = y1 - 16;
+        rgb[p++] = (298 * c + 409 * e + 128) >> 8;
+        rgb[p++] = (298 * c - 100 * d - 208 * e + 128) >> 8;
+        rgb[p++] = (298 * c + 516*d + 128) >> 8;
+    }
+}
+
 
 void frames(uint8_t *src, int lines) {
     int p = 0;
@@ -54,7 +78,8 @@ int main(int argc, char const *argv[]){
 		.bits = 8,
 		.speeds = _48MHZ
 	};
-	st7735s tft(spi_cfg, GPIO4_B0_D, GPIO4_B1_D);
+	st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
+    tft.init();
 	// init camera usb uvc rapoo
 	int fd = open("/dev/video0", O_RDWR);
 	struct v4l2_capability cap;
@@ -95,7 +120,7 @@ int main(int argc, char const *argv[]){
             frames(yuv422, lines);
             tft.pixels(y, lines);
             tft.set_dc(HIGH);
-            tft.transmit(rgb565);
+            tft.transmit(rgb565, 160 * lines * 2);
         }
         ioctl(fd, VIDIOC_QBUF, &b);
 	}

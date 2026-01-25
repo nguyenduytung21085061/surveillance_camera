@@ -50,15 +50,16 @@ class gpio{
         gpio();
         ~gpio();
         void init(gpio_pin_t pins, gpio_mode_t mode);
+        void export_gpio();
+        void unexport_gpio();
+        void direction_gpio();
         void set_mode(gpio_mode_t mode);
         void set_level(gpio_level_t level);
         bool get_level();
+
     private:
         gpio_pin_t pins;
         gpio_mode_t mode;
-        void export_gpio(gpio_pin_t pins);
-        void unexport_gpio(gpio_pin_t pins);
-        void direction_gpio(gpio_pin_t pins, gpio_mode_t mode);
 };
 
 #endif

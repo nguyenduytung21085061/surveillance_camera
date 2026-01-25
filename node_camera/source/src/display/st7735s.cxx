@@ -1,9 +1,22 @@
 #include "display/st7735s.h"
 
-st7735s::st7735s(spi_config_t spi_cfg, gpio_pin_t dc, gpio_pin_t rst) {
+st7735s::st7735s(spi_config_t spi_cfg, gpio_pin_t dc, gpio_pin_t rst, gpio_pin_t cs) {
 	this->spi0.init(spi_cfg);
 	this->gpio_dc.init(dc, OUTPUT);
 	this->gpio_rst.init(rst, OUTPUT);
+	this->gpio_cs.init(cs, OUTPUT);
+	usleep(100000);
+	this->gpio_dc.export_gpio();
+	usleep(100000);
+	this->gpio_dc.direction_gpio();
+	usleep(100000);
+	this->gpio_rst.export_gpio();
+	usleep(100000);
+	this->gpio_rst.direction_gpio();
+	usleep(100000);
+	this->gpio_cs.export_gpio();
+	usleep(100000);
+	this->gpio_cs.direction_gpio();
 }
 
 st7735s::~st7735s(){
@@ -11,6 +24,8 @@ st7735s::~st7735s(){
 }
 
 void st7735s::init(){
+	this->gpio_cs.set_level(LOW);
+	usleep(100000);
 	this->gpio_rst.set_level(LOW);
 	usleep(100000);
 	this->gpio_rst.set_level(HIGH);
@@ -43,16 +58,16 @@ void st7735s::set_dc(gpio_level_t level){
 	this->gpio_dc.set_level(level);
 }
 
-void st7735s::transmit(uint8_t *tx){
-	this->spi0.transmit(tx);
+void st7735s::transmit(uint8_t *tx, int length){
+	this->spi0.transmit(tx, length);
 }
 
 void st7735s::command(uint8_t c){
 	this->gpio_dc.set_level(LOW);
-	this->spi0.transmit(&c);
+	this->spi0.transmit(&c, 1);
 }
 
 void st7735s::data(uint8_t c){
 	this->gpio_dc.set_level(HIGH);
-	this->spi0.transmit(&c);
+	this->spi0.transmit(&c, 1);
 }	

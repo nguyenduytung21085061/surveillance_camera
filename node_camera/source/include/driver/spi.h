@@ -45,9 +45,9 @@ class spi {
         spi();
         ~spi();
         void init(spi_config_t config);
-        void transmit(uint8_t *tx);
+        void transmit(uint8_t *tx, uint32_t length);
         uint8_t receive(void);
-        uint8_t transfer(uint8_t *tx);
+        uint8_t transfer(uint8_t *tx, uint32_t length);
     private:
         spi_config_t config;
         int fd;
