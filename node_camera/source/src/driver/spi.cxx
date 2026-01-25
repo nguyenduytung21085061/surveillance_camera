@@ -1,15 +1,19 @@
 #include "driver/spi.h"
 
-spi::spi(spi_config_t config){
-	this->config = config;
-	this->fd = open(this->config.dev, O_RDWR);
-	ioctl(this->fd, SPI_IOC_WR_MODE, &this->config.mode);
-    ioctl(this->fd, SPI_IOC_WR_BITS_PER_WORD, &this->config.bits);
-    ioctl(this->fd, SPI_IOC_WR_MAX_SPEED_HZ, &this->config.speeds);
+spi::spi(){
+	
 }
 
 spi::~spi(){
 	close(this->fd);
+}
+
+void spi::init(spi_config_t config){
+    this->config = config;
+    this->fd = open(this->config.dev, O_RDWR);
+    ioctl(this->fd, SPI_IOC_WR_MODE, &this->config.mode);
+    ioctl(this->fd, SPI_IOC_WR_BITS_PER_WORD, &this->config.bits);
+    ioctl(this->fd, SPI_IOC_WR_MAX_SPEED_HZ, &this->config.speeds);
 }
 
 void spi::transmit(uint8_t *tx){

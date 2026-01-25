@@ -47,8 +47,9 @@ typedef enum {
 
 class gpio{
     public:
-        gpio(gpio_pin_t pins, gpio_mode_t mode);
+        gpio();
         ~gpio();
+        void init(gpio_pin_t pins, gpio_mode_t mode);
         void set_mode(gpio_mode_t mode);
         void set_level(gpio_level_t level);
         bool get_level();

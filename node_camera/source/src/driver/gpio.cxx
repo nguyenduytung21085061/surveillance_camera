@@ -1,14 +1,18 @@
 #include "driver/gpio.h"
 
-gpio::gpio(gpio_pin_t pins, gpio_mode_t mode){
-	this->pins = pins;
-	this->mode = mode;
-	this->export_gpio(this->pins);
-	this->direction_gpio(this->pins, this->mode);
+gpio::gpio(){
+	
 }
 
 gpio::~gpio(){
 	this->unexport_gpio(this->pins);
+}
+
+void gpio::init(gpio_pin_t pins, gpio_mode_t mode){
+	this->pins = pins;
+	this->mode = mode;
+	this->export_gpio(this->pins);
+	this->direction_gpio(this->pins, this->mode);
 }
 
 void gpio::set_level(gpio_level_t level){
@@ -48,6 +52,6 @@ void gpio::direction_gpio(gpio_pin_t pins, gpio_mode_t mode){
 	char buffer[34];
 	snprintf(buffer, sizeof(buffer), "/sys/class/gpio/gpio%d/direction", pins);
 	int fd = open(buffer, O_WRONLY);
-	write(fd, mode ? "out" : "in", mode ? 3 : 2);
+	write(fd, mode == OUTPUT ? "out" : "in", mode ? 3 : 2);
 	close(fd);	
 }
