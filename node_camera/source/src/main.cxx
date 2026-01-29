@@ -2,104 +2,94 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <string.h>
+#include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <linux/videodev2.h>
-#include <rknn_api.h>
-#include <pthread.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "display/st7735s.h"
 
-struct usb_rapoo_buffer {
- void *address;
- size_t length;
-}usb_rapoo_buffer[4];
+struct cam_buf {
+    void*  addr;
+    size_t len;
+};
 
-uint8_t yuv422[160 * 10 * 2];
-uint8_t rgb565[160 * 10 * 2];
+static cam_buf buffers[4];
 
-static inline uint16_t yuv_to_rgb(int y, int u, int v) {
-    int c = y - 16;
-    int d = u - 128;
-    int e = v - 128;
-    int r = (298 * c + 409 * e + 128) >> 8;
-    int g = (298 * c - 100 * d - 208 * e + 128) >> 8;
-    int b = (298 * c + 516 * d + 128) >> 8;
-    if (r < 0) r = 0; else if (r > 255) r = 255;
-    if (g < 0) g = 0; else if (g > 255) g = 255;
-    if (b < 0) b = 0; else if (b > 255) b = 255;
-    return (uint16_t)(( (r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3));
+static inline uint16_t bgr_to_rgb565(uint8_t b, uint8_t g, uint8_t r){
+    return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 }
 
-void frames(uint8_t *src, int lines) {
-    int p = 0;
-    int total_bytes_in = 160 * lines * 2;
-    for (int i = 0; i < total_bytes_in; i += 4) {
-        int y0 = src[i];
-        int u  = src[i+1];
-        int y1 = src[i+2];
-        int v  = src[i+3];
-        uint16_t pixel1 = yuv_to_rgb(y0, u, v);
-        rgb565[p++] = (uint8_t)(pixel1 >> 8); 
-        rgb565[p++] = (uint8_t)(pixel1 & 0xFF);
-        uint16_t pixel2 = yuv_to_rgb(y1, u, v);        
-        rgb565[p++] = (uint8_t)(pixel2 >> 8); 
-        rgb565[p++] = (uint8_t)(pixel2 & 0xFF);
-    }
-}
-
-int main(int argc, char const *argv[]){
- /* code */
- spi_config_t spi_cfg = {
-     .dev = "/dev/spidev0.0",
-     .mode = SPI_MODE_0,
-     .bits = 8,
-     .speeds = _48MHZ
- };
- st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
+int main(){
+    spi_config_t spi_cfg = {
+        .dev    = "/dev/spidev0.0",
+        .mode   = SPI_MODE_0,
+        .bits   = 8,
+        .speeds = _48MHZ
+    };
+    st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
     tft.init();
- // init camera usb uvc rapoo
- int fd = open("/dev/video0", O_RDWR);
- struct v4l2_capability cap;
-    ioctl(fd, VIDIOC_QUERYCAP, &cap);
-    struct v4l2_format fmt = {0};
+    int fd = open("/dev/video0", O_RDWR);
+    if (fd < 0) {
+        perror("open video");
+        return -1;
+    }
+    struct v4l2_format fmt{};
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width = 160;
-    fmt.fmt.pix.height = 128;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    ioctl(fd, VIDIOC_S_FMT, &fmt);
-    struct v4l2_requestbuffers req = {0};
-    req.count = 4;
-    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    fmt.fmt.pix.width       = 640;
+    fmt.fmt.pix.height      = 480;
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
+    fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+    if (ioctl(fd, VIDIOC_S_FMT, &fmt) < 0) {
+        perror("VIDIOC_S_FMT");
+        return -1;
+    }
+    struct v4l2_requestbuffers req{};
+    req.count  = 4;
+    req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
     ioctl(fd, VIDIOC_REQBUFS, &req);
     for (int i = 0; i < 4; i++) {
-        struct v4l2_buffer b = {0};
-        b.type = req.type;
-        b.memory = V4L2_MEMORY_MMAP;
-        b.index = i;
-        ioctl(fd, VIDIOC_QUERYBUF, &b);
-        usb_rapoo_buffer[i].length = b.length;
-        usb_rapoo_buffer[i].address = mmap(NULL, b.length, PROT_READ, MAP_SHARED, fd, b.m.offset);
-        ioctl(fd, VIDIOC_QBUF, &b);
+        struct v4l2_buffer buf{};
+        buf.type   = req.type;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index  = i;
+        ioctl(fd, VIDIOC_QUERYBUF, &buf);
+        buffers[i].len  = buf.length;
+        buffers[i].addr = mmap(NULL, buf.length, PROT_READ, MAP_SHARED, fd, buf.m.offset);
+        ioctl(fd, VIDIOC_QBUF, &buf);
     }
-    enum v4l2_buf_type t = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    ioctl(fd, VIDIOC_STREAMON, &t);
- // end camera usb uvc rapoo
- while (1) {
-     struct v4l2_buffer b = {0};
-        b.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        b.memory = V4L2_MEMORY_MMAP;
-        ioctl(fd, VIDIOC_DQBUF, &b);
-        uint8_t *frame = (uint8_t *)usb_rapoo_buffer[b.index].address;
-        for (int y = 0; y < 128; y += 10) {
-            int lines = (y + 10 <= 128) ? 10 : (128 - y);
-            memcpy(yuv422, frame + y * 160 * 2, 160 * lines * 2);
-            frames(yuv422, lines);
-            tft.pixels(y, lines);
-            tft.set_dc(HIGH);
-            tft.transmit(rgb565, 160 * lines * 2);
+    enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    ioctl(fd, VIDIOC_STREAMON, &type);
+    cv::Mat bgr, resized;
+    static uint8_t rgb565[160 * 128 * 2];
+    while (1) {
+        struct v4l2_buffer buf{};
+        buf.type   = type;
+        buf.memory = V4L2_MEMORY_MMAP;
+        ioctl(fd, VIDIOC_DQBUF, &buf);
+        cv::Mat mjpeg(1, buf.bytesused, CV_8UC1, buffers[buf.index].addr);
+        bgr = cv::imdecode(mjpeg, cv::IMREAD_COLOR);
+        if (!bgr.empty()) {
+            cv::resize(bgr, resized, cv::Size(160, 128));
+            int p = 0;
+            for (int y = 0; y < 128; y++) {
+                cv::Vec3b* row = resized.ptr<cv::Vec3b>(y);
+                for (int x = 0; x < 160; x++) {
+                    uint16_t c = bgr_to_rgb565( row[x][0], row[x][1], row[x][2]);
+                    rgb565[p++] = c >> 8;
+                    rgb565[p++] = c & 0xFF;
+                }
+            }
+            for (int y = 0; y < 128; y += 10) {
+                int lines = (y + 10 <= 128) ? 10 : (128 - y);
+                tft.pixels(y, lines);
+                tft.set_dc(HIGH);
+                tft.transmit(&rgb565[y * 160 * 2], 160 * lines * 2);
+            }
         }
-        ioctl(fd, VIDIOC_QBUF, &b);
- }
- return 0;
+        ioctl(fd, VIDIOC_QBUF, &buf);
+    }
+    return 0;
 }
