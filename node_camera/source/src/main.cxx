@@ -8,16 +8,14 @@
 #include <rknn_api.h>
 #include <pthread.h>
 #include "display/st7735s.h"
-#include "gpio.h"
 
 struct usb_rapoo_buffer {
-	void *address;
-	size_t length;
+ void *address;
+ size_t length;
 }usb_rapoo_buffer[4];
 
 uint8_t yuv422[160 * 10 * 2];
 uint8_t rgb565[160 * 10 * 2];
-uint8_t rgb888[160 * 128 * 3];
 
 static inline uint16_t yuv_to_rgb(int y, int u, int v) {
     int c = y - 16;
@@ -31,27 +29,6 @@ static inline uint16_t yuv_to_rgb(int y, int u, int v) {
     if (b < 0) b = 0; else if (b > 255) b = 255;
     return (uint16_t)(( (r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3));
 }
-
-static inline void yuyv_to_rgb888(uint8_t *yuyv, uint8_t *rgb, int width, int height) {
-    int p = 0;
-    for (int i = 0; i < width * height * 2; i += 4) {
-        int y0 = yuyv[i];
-        int u  = yuyv[i + 1];
-        int y1 = yuyv[i + 2];
-        int v  = yuyv[i + 3];
-        int c = y0 - 16;
-        int d = u - 128;
-        int e = v - 128;
-        rgb[p++] = (298 * c + 409 * e + 128) >> 8;
-        rgb[p++] = (298 * c - 100 * d - 208 * e + 128) >> 8;
-        rgb[p++] = (298 * c + 516 * d + 128) >> 8;
-        c = y1 - 16;
-        rgb[p++] = (298 * c + 409 * e + 128) >> 8;
-        rgb[p++] = (298 * c - 100 * d - 208 * e + 128) >> 8;
-        rgb[p++] = (298 * c + 516*d + 128) >> 8;
-    }
-}
-
 
 void frames(uint8_t *src, int lines) {
     int p = 0;
@@ -71,18 +48,18 @@ void frames(uint8_t *src, int lines) {
 }
 
 int main(int argc, char const *argv[]){
-	/* code */
-	spi_config_t spi_cfg = {
-		.dev = "/dev/spidev0.0",
-		.mode = SPI_MODE_0,
-		.bits = 8,
-		.speeds = _48MHZ
-	};
-	st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
+ /* code */
+ spi_config_t spi_cfg = {
+     .dev = "/dev/spidev0.0",
+     .mode = SPI_MODE_0,
+     .bits = 8,
+     .speeds = _48MHZ
+ };
+ st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
     tft.init();
-	// init camera usb uvc rapoo
-	int fd = open("/dev/video0", O_RDWR);
-	struct v4l2_capability cap;
+ // init camera usb uvc rapoo
+ int fd = open("/dev/video0", O_RDWR);
+ struct v4l2_capability cap;
     ioctl(fd, VIDIOC_QUERYCAP, &cap);
     struct v4l2_format fmt = {0};
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -107,9 +84,9 @@ int main(int argc, char const *argv[]){
     }
     enum v4l2_buf_type t = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     ioctl(fd, VIDIOC_STREAMON, &t);
-	// end camera usb uvc rapoo
-	while (1) {
-		struct v4l2_buffer b = {0};
+ // end camera usb uvc rapoo
+ while (1) {
+     struct v4l2_buffer b = {0};
         b.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         b.memory = V4L2_MEMORY_MMAP;
         ioctl(fd, VIDIOC_DQBUF, &b);
@@ -123,6 +100,6 @@ int main(int argc, char const *argv[]){
             tft.transmit(rgb565, 160 * lines * 2);
         }
         ioctl(fd, VIDIOC_QBUF, &b);
-	}
-	return 0;
+ }
+ return 0;
 }

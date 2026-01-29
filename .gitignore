@@ -8,3 +8,4 @@ node_camera/compile_commands.json
 node_camera/Makefile
 node_camera/gpio.o
 node_camera/spi.o
+node_camera/source/src/archive.cxx
