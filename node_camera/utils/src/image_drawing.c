@@ -9,11 +9,6 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
-static int clamp(float val, int min, int max)
-{
-    return val > min ? (val < max ? val : max) : min;
-}
-
 // src color format(ARGB888) To dest format color
 static unsigned int convert_color(unsigned int src_color, image_format_t dst_fmt)
 {
@@ -43,9 +38,9 @@ static unsigned int convert_color(unsigned int src_color, image_format_t dst_fmt
         p_dst_color[3] = a;
         break;
     case IMAGE_FORMAT_YUV420SP_NV12:
-        p_dst_color[0] = (0.299 * r + 0.587 * g + 0.114 * b);
-        p_dst_color[1] = clamp(128 + (-0.14713 * r - 0.28886 * g + 0.436 * b), 0, 255);
-        p_dst_color[2] = clamp(128 + (0.615 * r - 0.51499 * g - 0.10001 * b), 0, 255);
+        p_dst_color[0] = 0.299 * r + 0.587 * g + 0.114 * b;
+        p_dst_color[1] = 0.492 * (b - p_dst_color[0]);
+        p_dst_color[2] = 0.877 * (r - p_dst_color[0]);
         break;
     case IMAGE_FORMAT_YUV420SP_NV21:
         p_dst_color[0] = 0.299 * r + 0.587 * g + 0.114 * b;
@@ -1180,7 +1175,7 @@ static void draw_text_c1(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w;
 
-    unsigned char* resized_font_bitmap = (unsigned char*)malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1237,7 +1232,7 @@ static void draw_text_c2(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 2;
 
-    unsigned char* resized_font_bitmap = (unsigned char*)malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1296,7 +1291,7 @@ static void draw_text_c3(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 3;
 
-    unsigned char* resized_font_bitmap = (unsigned char*)malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1356,7 +1351,7 @@ static void draw_text_c4(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 4;
 
-    unsigned char* resized_font_bitmap = (unsigned char*)malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1530,37 +1525,6 @@ void draw_line(image_buffer_t* image, int x0, int y0, int x1, int y1, unsigned i
     }
 }
 
-void rbbox_to_corners(const float *in_rbbox, int *out_rbbox) {
-    // generate clockwise corners and rotate it clockwise
-    // 顺时针方向返回角点位置
-    float cx = in_rbbox[0] + in_rbbox[2] / 2;
-    float cy = in_rbbox[1] + in_rbbox[3] / 2;
-    float x_d = in_rbbox[2];
-    float y_d = in_rbbox[3];
-    float angle = in_rbbox[4];
-    float a_cos = cos(angle);
-    float a_sin = sin(angle);
-    float corners_x[4] = {-x_d / 2, -x_d / 2, x_d / 2, x_d / 2};
-    float corners_y[4] = {-y_d / 2, y_d / 2, y_d / 2, -y_d / 2};
-    for (int i = 0; i < 4; ++i) {
-        out_rbbox[2 * i] = (int)(a_cos * corners_x[i] - a_sin * corners_y[i] + cx);
-        out_rbbox[2 * i + 1] = (int)(a_sin * corners_x[i] + a_cos * corners_y[i] + cy);
-    }
-}
-
-void draw_obb_rectangle(image_buffer_t *image, int rx, int ry, int rw, int rh, float angle, unsigned int color,
-                        int thickness) {
-    float in_bbox[5] = {(float)(rx), (float)(ry), (float)(rw), (float)(rh), angle};
-    int out_box_corners[8];
-    rbbox_to_corners(in_bbox, out_box_corners);
-    for(int i = 0 ; i < 4; i++) {
-        int index1 = i;
-        int index2 = (i + 1) % 4;
-        draw_line(image, out_box_corners[index1 * 2], out_box_corners[index1 * 2 + 1],
-                  out_box_corners[index2 * 2], out_box_corners[index2 * 2 + 1], color, thickness);
-    }
-}
-
 void draw_text(image_buffer_t* image, const char* text, int x, int y, unsigned int color,
                  int fontsize)
 {
@@ -1568,7 +1532,7 @@ void draw_text(image_buffer_t* image, const char* text, int x, int y, unsigned i
     unsigned char* pixels = image->virt_addr;
     int w = image->width;
     int h = image->height;
-    unsigned int draw_color = convert_color(color, format);
+    unsigned draw_color = convert_color(color, format);
 
     switch (format)
     {
