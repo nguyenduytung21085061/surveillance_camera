@@ -139,10 +139,11 @@ static int read_image_jpeg(const char* path, image_buffer_t* image)
     image->format = IMAGE_FORMAT_RGB888;
     image->virt_addr = sw_out_buf;
     image->size = sw_out_size;
-out:
+out:{
     if (jpegBuf) {
         free(jpegBuf);
     }
+}
     return 0;
 }
 
