@@ -1175,7 +1175,7 @@ static void draw_text_c1(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w;
 
-    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = (unsigned char *)malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1232,7 +1232,7 @@ static void draw_text_c2(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 2;
 
-    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = (unsigned char *)malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1291,7 +1291,7 @@ static void draw_text_c3(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 3;
 
-    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = (unsigned char *)malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
@@ -1351,7 +1351,7 @@ static void draw_text_c4(unsigned char* pixels, int w, int h, const char* text, 
     const unsigned char* pen_color = (const unsigned char*)&color;
     int stride = w * 4;
 
-    unsigned char* resized_font_bitmap = malloc(fontpixelsize * fontpixelsize * 2);
+    unsigned char* resized_font_bitmap = (unsigned char *)malloc(fontpixelsize * fontpixelsize * 2);
 
     const int n = strlen(text);
 
