@@ -280,7 +280,7 @@ int write_image(const char* path, const image_buffer_t* img)
         ret = stbi_write_png(path, width, height, channel, data, 0);
     } else if (strcmp(_ext, ".data") == 0 | strcmp(_ext, ".DATA") == 0) {
         int size = get_image_size((image_buffer_t *)img);
-        ret = write_data_to_file(path, data, size);
+        ret = write_data_to_file(path, (const char *)data, size);
     } else {
         // unknown extension type
         return -1;
@@ -485,6 +485,7 @@ int get_image_size(image_buffer_t* image)
     default:
         break;
     }
+    return -1;
 }
 
 static int convert_image_rga(image_buffer_t* src_img, image_buffer_t* dst_img, image_rect_t* src_box, image_rect_t* dst_box, char color)
