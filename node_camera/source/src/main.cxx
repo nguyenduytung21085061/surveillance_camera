@@ -116,8 +116,6 @@ int main(int argc, char **argv){
     cv::Mat bgr, resized;
     int frame_id = 0;
     while (1) {
-        struct timespec ts_start, ts_end;
-        clock_gettime(CLOCK_MONOTONIC, &ts_start);
         struct v4l2_buffer buf{};
         buf.type   = type;
         buf.memory = V4L2_MEMORY_MMAP;
@@ -160,11 +158,6 @@ int main(int argc, char **argv){
         }
         ioctl(fd, VIDIOC_QBUF, &buf);
         frame_id++;
-        clock_gettime(CLOCK_MONOTONIC, &ts_end);
-        long elapsed_ms = (ts_end.tv_sec - ts_start.tv_sec) * 1000 + (ts_end.tv_nsec - ts_start.tv_nsec) / 1000000;
-        long target_ms = 1000 / TARGET_FPS;
-        if (elapsed_ms < target_ms)
-            usleep((target_ms - elapsed_ms) * 1000);
     }
     deinit_post_process();
     release_yolov5_model(&rknn_app_ctx);
