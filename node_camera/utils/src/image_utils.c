@@ -108,6 +108,9 @@ static int read_image_jpeg(const char* path, image_buffer_t* image)
             width, height, subsampName[subsample], colorspaceName[colorspace], orientation);
     int sw_out_size = width * height * 3;
     unsigned char* sw_out_buf = image->virt_addr;
+
+    // 错误码为0时，表示警告，错误码为-1时表示错误
+    int pixelFormat = TJPF_RGB;
     if (sw_out_buf == NULL) {
         sw_out_buf = (unsigned char*)malloc(sw_out_size * sizeof(unsigned char));
     }
@@ -117,9 +120,6 @@ static int read_image_jpeg(const char* path, image_buffer_t* image)
     }
 
     flags |= 0;
-
-    // 错误码为0时，表示警告，错误码为-1时表示错误
-    int pixelFormat = TJPF_RGB;
     ret = tjDecompress2(handle, jpegBuf, size, sw_out_buf, width, 0, height, pixelFormat, flags);
     // ret = tjDecompressToYUV2(handle, jpeg_buf, size, dst_buf, *width, padding, *height, flags);
     if ((0 != tjGetErrorCode(handle)) && (ret < 0)) {
