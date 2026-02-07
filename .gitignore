@@ -9,3 +9,5 @@ node_camera/Makefile
 node_camera/gpio.o
 node_camera/spi.o
 node_camera/source/src/archive.cxx
+node_camera/test/
+node_camera/3rdparty/allocator/
