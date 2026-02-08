@@ -137,6 +137,13 @@ int main(int argc, char **argv){
                     mapCoordinates(bgr, model_input, &det->box.right, &det->box.bottom);
                     printf("%s %.2f\n", coco_cls_to_names(det->cls_id), det->prop);
                     cv::rectangle(bgr, cv::Point(det->box.left, det->box.top), cv::Point(det->box.right, det->box.bottom), cv::Scalar(0, 255, 0), 2);
+                    char label[32];
+                    snprintf(label, sizeof(label), "%s %.2f", coco_cls_to_names(det->cls_id), det->prop);
+                    int x = det->box.left;
+                    int y = det->box.top - 1;
+                    if (y < 10) 
+                        y = 10;
+                    cv::putText(bgr, label, cv::Point(x + 2, y - 3), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 1);
                 }
             }
             cv::resize(bgr, resized, cv::Size(TFT_W, TFT_H));
