@@ -40,10 +40,10 @@ static const char* coco_labels[] = {
     "refrigerator","book","clock","vase","scissors","teddy bear","hair drier","toothbrush"
 };
 
-const char* coco_cls_to_names(int cls_id){
-    if (cls_id < 0 || cls_id >= COCO_CLASS_NUM)
+const char* coco_cls_to_names(int class_id){
+    if (class_id < 0 || class_id >= COCO_CLASS_NUM)
         return "unknown";
-    return coco_labels[cls_id];
+    return coco_labels[class_id];
 }
 
 struct cam_buf {
@@ -109,8 +109,11 @@ int main(int argc, char **argv){
     ioctl(fd, VIDIOC_STREAMON, &type);
     rknn_app_context_t rknn_app_ctx;
     object_detect_result_list od_results;
-    memset(&rknn_app_ctx, 0, sizeof(rknn_app_ctx));
-    init_yolov5_model(argv[1], &rknn_app_ctx);
+    object_detect_result_list last_results;
+    bool has_last=false;
+    memset(&rknn_app_ctx,0,sizeof(rknn_app_ctx));
+    memset(&last_results,0,sizeof(last_results));
+    init_yolov5_model(argv[1],&rknn_app_ctx);
     // init_post_process();
     cv::Mat model_input(MODEL_H, MODEL_W, CV_8UC3, rknn_app_ctx.input_mems[0]->virt_addr);
     cv::Mat bgr, resized;
@@ -120,18 +123,23 @@ int main(int argc, char **argv){
         buf.type   = type;
         buf.memory = V4L2_MEMORY_MMAP;
         ioctl(fd, VIDIOC_DQBUF, &buf);
-        cv::Mat mjpeg(1, buf.bytesused, CV_8UC1, buffers[buf.index].addr
-        );
+        cv::Mat mjpeg(1, buf.bytesused, CV_8UC1, buffers[buf.index].addr);
         bgr = cv::imdecode(mjpeg, cv::IMREAD_COLOR);
         if (!bgr.empty()) {
             if (frame_id % YOLO_SKIP == 0) {
-                cv::resize(bgr, model_input, cv::Size(MODEL_W, MODEL_H));
+                cv::resize(bgr,model_input,cv::Size(MODEL_W, MODEL_H));
                 inference_yolov5_model(&rknn_app_ctx, &od_results);
-                for (int i = 0; i < od_results.count; i++) {
-                    auto *det = &od_results.results[i];
-                    if (det->cls_id != PERSON_ID)
+                last_results = od_results;
+                has_last = true;
+            }
+            if(has_last){
+                float scaleX = (float)CAM_W / MODEL_W;
+                float scaleY = (float)CAM_H / MODEL_H;
+                for(int i = 0;i < last_results.count; i++){
+                    auto *det = &last_results.results[i];
+                    if(det->cls_id != PERSON_ID) 
                         continue;
-                    if (det->prop < CONF_THRESH)
+                    if(det->prop<CONF_THRESH) 
                         continue;
                     mapCoordinates(bgr, model_input, &det->box.left, &det->box.top);
                     mapCoordinates(bgr, model_input, &det->box.right, &det->box.bottom);
