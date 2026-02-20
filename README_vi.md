@@ -94,13 +94,32 @@ Node Camera → Node Notice sử dụng:
 
 ---
 
-## 🔮 Hướng phát triển
+## 📅 Các bước đã thực hiện trong dự án
 
-- Nhận diện khuôn mặt
-- Thông báo qua điện thoại
-- Theo dõi qua Internet
-- Hệ thống nhiều camera
-- Tích hợp Smart Home
+| STT | Công việc | Trạng thái | Ngày hoàn thành |
+|----|-----------|------------|----------------|
+| 1 | Đọc USB WiFi | ✅ Xong | 24/01/2026 |
+| 2 | Giao tiếp màn hình TFT | ✅ Xong | 25/01/2026 |
+| 3 | Đọc camera USB | ✅ Xong | 26/01/2026 |
+| 4 | Stream camera USB lên TFT | ✅ Xong | 28/01/2026 |
+| 5 | Thêm Mobile OpenCV trên Luckfox Pico | ✅ Xong | 29/01/2026 |
+| 6 | Resize stream từ 160x120 → 160x128 trên TFT | ✅ Xong | 29/01/2026 |
+| 7 | Chạy RKNN trên Luckfox Pico | ✅ Xong | 05/02/2026 |
+| 8 | Load model YOLOv5 nhận diện người | ✅ Xong | 07/02/2026 |
+| 9 | Thêm confidence score hiển thị trên TFT | ✅ Xong | 08/01/2026 |
+|10 | Nghiên cứu mở rộng USB hub cho Luckfox Pico | ✅ Xong | 11/01/2026 |
+|11 | Vẽ sơ đồ nguyên lý USB hub cho node Camera | ⏳ Chưa | — |
+|12 | Vẽ PCB node Camera | ⏳ Chưa | — |
+|13 | Kiểm thử mạch STM32F103RCT6 | ✅ Xong | 15/01/2026 |
+|14 | Kiểm thử truyền thông HC-12 giữa Luckfox Pico và STM32F103RCT6 | ✅ Xong | 17/01/2026 |
+|15 | Phát triển I2S với mạch khuếch đại và loa | ⏳ Chưa | — |
+|16 | Test full nhận diện người → node Notice → phát loa | ⏳ Chưa | — |
+|17 | Nghiên cứu sơ đồ nguyên lý node Notice | ⏳ Chưa | — |
+|18 | Đánh giá mô hình hệ thống | ⏳ Chưa | — |
+|19 | Nâng cấp màn hình lớn hơn cho node Camera | ⏳ Chưa | — |
+|20 | Nghiên cứu face embedding cho Luckfox Pico | ⏳ Chưa | — |
+|21 | Phát triển node Camera thành sản phẩm độc lập | ⏳ Chưa | — |
+|22 | Nghiên cứu truyền thông giám sát cho app mobile | ⏳ Chưa | — |
 
 ---
 

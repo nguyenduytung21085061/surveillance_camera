@@ -101,13 +101,32 @@ Camera Node communicates with Notice Node using:
 
 ---
 
-## 🔮 Future Development
+## 📅 Project Progress
 
-- Face recognition
-- Mobile app notifications
-- Internet remote monitoring
-- Multi-camera system
-- Smart home integration
+| No | Task | Status | Completion Date |
+|----|------|--------|----------------|
+| 1 | Read USB WiFi | ✅ Done | 24/01/2026 |
+| 2 | Interface TFT display | ✅ Done | 25/01/2026 |
+| 3 | Read USB camera | ✅ Done | 26/01/2026 |
+| 4 | Stream USB camera on TFT | ✅ Done | 28/01/2026 |
+| 5 | Add Mobile OpenCV on Luckfox Pico | ✅ Done | 29/01/2026 |
+| 6 | Fit stream size from 160x120 → 160x128 on TFT | ✅ Done | 29/01/2026 |
+| 7 | Run RKNN on Luckfox Pico | ✅ Done | 05/02/2026 |
+| 8 | Load YOLOv5 model to detect person | ✅ Done | 07/02/2026 |
+| 9 | Add confidence score on TFT | ✅ Done | 08/01/2026 |
+|10 | Research USB hub expansion for Luckfox Pico | ✅ Done | 11/01/2026 |
+|11 | Draw USB hub schematic for Camera Node | ⏳ Pending | — |
+|12 | Design PCB for Camera Node | ⏳ Pending | — |
+|13 | Test STM32F103RCT6 board | ✅ Done | 15/01/2026 |
+|14 | Test HC-12 communication between Luckfox Pico and STM32F103RCT6 | ✅ Done | 17/01/2026 |
+|15 | Develop I2S audio with amplifier & speaker | ⏳ Pending | — |
+|16 | Full test: Person detection → Notice Node → Speaker alert | ⏳ Pending | — |
+|17 | Research schematic for Notice Node | ⏳ Pending | — |
+|18 | System evaluation testing | ⏳ Pending | — |
+|19 | Upgrade TFT screen to larger display | ⏳ Pending | — |
+|20 | Research face embedding on Luckfox Pico | ⏳ Pending | — |
+|21 | Develop standalone Camera Node product | ⏳ Pending | — |
+|22 | Research mobile monitoring communication system | ⏳ Pending | — |
 
 ---
 
