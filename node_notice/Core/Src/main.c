@@ -52,7 +52,7 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+uint8_t rx2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -74,6 +74,14 @@ int _write(int fd, char *ptr, int len){
     return (hstatus == HAL_OK) ? len : -1;
   }
   return -1;
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2){
+        printf("HC12 RX: %c\r\n", rx2);
+        HAL_UART_Receive_IT(&huart2, &rx2, 1);
+    }
 }
 /* USER CODE END 0 */
 
@@ -110,6 +118,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_UART_Receive_IT(&huart2, &rx2, 1);
   LL_GPIO_IsOutputPinSet(GPIOC, LL_GPIO_PIN_7);
   printf("STM32F103RCT6\r\n");
   // for (int i = 0; i < 128; i++){
@@ -121,7 +130,8 @@ int main(void)
   //   if(i > 0 && (i + 1) % 16 == 0)
   //     printf("\r\n");
   // }
-  HAL_I2S_Transmit(&hi2s2, (uint16_t*)xin_chao_pcm, xin_chao_pcm_len / 2, HAL_MAX_DELAY);
+  // HAL_I2S_Transmit(&hi2s2, (uint16_t*)wav, wav_len / 2, HAL_MAX_DELAY);
+  // HAL_UART_Transmit(&huart2, (uint8_t*)("Nguyenduytung\r\n"), 15, HAL_MAX_DELAY);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -264,11 +274,11 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.Mode = UART_MODE_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   if (HAL_UART_Init(&huart2) != HAL_OK)
