@@ -112,7 +112,7 @@ Node Camera → Node Notice sử dụng:
 |12 | Vẽ PCB node Camera | ⏳ Chưa | — |
 |13 | Kiểm thử mạch STM32F103RCT6 | ✅ Xong | 15/01/2026 |
 |14 | Kiểm thử truyền thông HC-12 giữa Luckfox Pico và STM32F103RCT6 | ✅ Xong | 17/01/2026 |
-|15 | Phát triển I2S với mạch khuếch đại và loa | ⏳ Chưa | — |
+|15 | Phát triển I2S với mạch khuếch đại và loa | | ✅ Done| 22/02/2026 |
 |16 | Test full nhận diện người → node Notice → phát loa | ⏳ Chưa | — |
 |17 | Nghiên cứu sơ đồ nguyên lý node Notice | ⏳ Chưa | — |
 |18 | Đánh giá mô hình hệ thống | ⏳ Chưa | — |

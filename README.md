@@ -119,7 +119,7 @@ Camera Node communicates with Notice Node using:
 |12 | Design PCB for Camera Node | ⏳ Pending | — |
 |13 | Test STM32F103RCT6 board | ✅ Done | 15/01/2026 |
 |14 | Test HC-12 communication between Luckfox Pico and STM32F103RCT6 | ✅ Done | 17/01/2026 |
-|15 | Develop I2S audio with amplifier & speaker | ⏳ Pending | — |
+|15 | Develop I2S audio with amplifier & speaker | ✅ Done| 22/02/2026 |
 |16 | Full test: Person detection → Notice Node → Speaker alert | ⏳ Pending | — |
 |17 | Research schematic for Notice Node | ⏳ Pending | — |
 |18 | System evaluation testing | ⏳ Pending | — |
