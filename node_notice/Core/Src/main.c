@@ -130,7 +130,7 @@ int main(void)
   //   if(i > 0 && (i + 1) % 16 == 0)
   //     printf("\r\n");
   // }
-  // HAL_I2S_Transmit(&hi2s2, (uint16_t*)wav, wav_len / 2, HAL_MAX_DELAY);
+  HAL_I2S_Transmit(&hi2s2, (uint16_t*)wav, wav_len / 2, HAL_MAX_DELAY);
   // HAL_UART_Transmit(&huart2, (uint8_t*)("Nguyenduytung\r\n"), 15, HAL_MAX_DELAY);
   /* USER CODE END 2 */
 

@@ -1,11 +1,11 @@
 .cache/
 .pio/
-.settings/
-Drivers/
-.cproject
-.mxproject
-.project
-*.json
-*.ini
-*.ioc
-*.ld
+# .settings/
+# Drivers/
+# .cproject
+# .mxproject
+# .project
+# *.json
+# *.ini
+# *.ioc
+# *.ld
