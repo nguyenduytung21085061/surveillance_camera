@@ -5,7 +5,7 @@
 # .cproject
 # .mxproject
 # .project
-# *.json
+*.json
 # *.ini
 # *.ioc
 # *.ld
