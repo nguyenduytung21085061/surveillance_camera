@@ -14,6 +14,7 @@
 #include <file_utils.h>
 #include <image_drawing.h>
 #include <display/st7735s.h>
+#include <display/ili9341.h>
 
 #define MODEL_W         640
 #define MODEL_H         640
