@@ -20,10 +20,10 @@
 #define MODEL_H         640
 #define CAM_W           640
 #define CAM_H           480
-#define TFT_W           160
-#define TFT_H           128
-#define YOLO_SKIP       2 
-#define TARGET_FPS      10
+#define TFT_W           320
+#define TFT_H           240
+#define YOLO_SKIP       1
+#define TARGET_FPS      30
 #define PERSON_ID       0
 #define CONF_THRESH     0.45
 #define COCO_CLASS_NUM  80
@@ -76,7 +76,7 @@ int main(int argc, char **argv){
         .bits   = 8,
         .speeds = _48MHZ
     };
-    st7735s tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
+    ili9341 tft(spi_cfg, GPIO4_B0_D, GPIO0_A4_D, GPIO4_B1_D);
     tft.init();
     static uint8_t rgb565[TFT_W * TFT_H * 2];
     int fd = open("/dev/video0", O_RDWR);
@@ -92,7 +92,7 @@ int main(int argc, char **argv){
     fmt.fmt.pix.field       = V4L2_FIELD_ANY;
     ioctl(fd, VIDIOC_S_FMT, &fmt);
     struct v4l2_requestbuffers req{};
-    req.count  = 4;
+    req.count  = 2;
     req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
     ioctl(fd, VIDIOC_REQBUFS, &req);
@@ -165,8 +165,16 @@ int main(int argc, char **argv){
                     rgb565[p++] = c & 0xFF;
                 }
             }
-            for (int y = 0; y < TFT_H; y += 10) {
-                int lines = (y + 10 <= TFT_H) ? 10 : (TFT_H - y);
+            // for (int y = 0; y < TFT_H; y += 100) {
+            //     int lines = (y + 100 <= TFT_H) ? 100 : (TFT_H - y);
+            //     tft.pixels(y, lines);
+            //     tft.set_dc(HIGH);
+            //     int len = TFT_W * lines * 2;
+            //     int offset = y * TFT_W * 2;
+            //     tft.transmit(&rgb565[offset], len);
+            // }
+            for (int y = 0; y < TFT_H; y += 100) {
+                int lines = (y + 100 <= TFT_H) ? 100 : (TFT_H - y);
                 tft.pixels(y, lines);
                 tft.set_dc(HIGH);
                 tft.transmit(&rgb565[y * TFT_W * 2], TFT_W * lines * 2);

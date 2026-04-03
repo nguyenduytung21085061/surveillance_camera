@@ -123,7 +123,7 @@ Camera Node communicates with Notice Node using:
 |16 | Full test: Person detection → Notice Node → Speaker alert | ⏳ Pending | — |
 |17 | Research schematic for Notice Node | ⏳ Pending | — |
 |18 | System evaluation testing | ⏳ Pending | — |
-|19 | Upgrade TFT screen to larger display | ⏳ Pending | — |
+|19 | Upgrade TFT screen to larger display | ✅ Done | 03/04/2026 |
 |20 | Research face embedding on Luckfox Pico | ⏳ Pending | — |
 |21 | Develop standalone Camera Node product | ⏳ Pending | — |
 |22 | Research mobile monitoring communication system | ⏳ Pending | — |
