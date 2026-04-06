@@ -108,7 +108,7 @@ Node Camera → Node Notice sử dụng:
 | 8 | Load model YOLOv5 nhận diện người | ✅ Xong | 07/02/2026 |
 | 9 | Thêm confidence score hiển thị trên TFT | ✅ Xong | 08/01/2026 |
 |10 | Nghiên cứu mở rộng USB hub cho Luckfox Pico | ✅ Xong | 11/01/2026 |
-|11 | Vẽ sơ đồ nguyên lý USB hub cho node Camera | ⏳ Chưa | — |
+|11 | Vẽ sơ đồ nguyên lý USB hub cho node Camera | ✅ Xong | 06/04/2026 |
 |12 | Vẽ PCB node Camera | ⏳ Chưa | — |
 |13 | Kiểm thử mạch STM32F103RCT6 | ✅ Xong | 15/01/2026 |
 |14 | Kiểm thử truyền thông HC-12 giữa Luckfox Pico và STM32F103RCT6 | ✅ Xong | 17/01/2026 |

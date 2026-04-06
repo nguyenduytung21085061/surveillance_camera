@@ -115,7 +115,7 @@ Camera Node communicates with Notice Node using:
 | 8 | Load YOLOv5 model to detect person | ✅ Done | 07/02/2026 |
 | 9 | Add confidence score on TFT | ✅ Done | 08/01/2026 |
 |10 | Research USB hub expansion for Luckfox Pico | ✅ Done | 11/01/2026 |
-|11 | Draw USB hub schematic for Camera Node | ⏳ Pending | — |
+|11 | Draw USB hub schematic for Camera Node | ✅ Done | 06/04/2026 |
 |12 | Design PCB for Camera Node | ⏳ Pending | — |
 |13 | Test STM32F103RCT6 board | ✅ Done | 15/01/2026 |
 |14 | Test HC-12 communication between Luckfox Pico and STM32F103RCT6 | ✅ Done | 17/01/2026 |
